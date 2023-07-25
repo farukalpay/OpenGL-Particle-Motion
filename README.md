@@ -29,7 +29,7 @@ In this section of the code, various variables that will be used to simulate the
 void updateForces() {
     float r = std::abs(pos2 - pos1) / SCALE + 2 * halfWidth ;
     float forceMagnitude = k * std::abs(q1 * q2) / (r * r);
-    float direction = (q1 * q2) < 0 ? -1.0f : 1.0f;
+    float direction = (q1 * q2) > 0 ? -1.0f : 1.0f;
 
     // Convert force to pikometer by multiplying by SCALE
     force1 = direction * forceMagnitude * SCALE / mass1;
@@ -40,7 +40,7 @@ In this function, r represents the distance, which is `|position of q2 - positio
 
 forceMagnitude represents Coulomb's Law which is `k * |Q1 * Q2| / |r * r|`
 
-direction variable is -1.0f if `(q1 * q2) < 0` otherwise direction variable is set to 1.0f. positive value indicates move to right, on the other hand negative value indicates move to left.
+direction variable is -1.0f if `(q1 * q2) > 0` otherwise direction variable is set to 1.0f. positive value indicates move to right, on the other hand negative value indicates move to left.
 
 ```
 force1 = direction * forceMagnitude * SCALE / mass1;

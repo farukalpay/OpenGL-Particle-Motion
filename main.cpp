@@ -16,23 +16,23 @@
 const float width = 10.0f;  // The width of the image. Adjust as necessary
 const float halfWidth = width / 2.0f;  // Half the width, which we'll use often
 
-// Scale factor for positions (1 meter = 0.5 x 10^15 pixels)
-const float SCALE = 0.0000000000002f;
+// Scale factor for positions (1 meter = 1.0 * 10^-12 pixels)
+const float SCALE = std::pow(10.0f, -12.0f);
 
 // Charges are given in nano-Coulombs
 float q1 = 1.0f;  // nano-Coulombs
-float q2 = -1.0f; // nano-Coulombs
+float q2 = 1.0f; // nano-Coulombs
 
 // Positions are given in meters and scaled to pixels
 // Initial positions are in the middle of the screen
-float pos1 = 1; // pixels
-float pos2 = -1; // pixels
+float pos1 = 5; // pixels
+float pos2 = -5; // pixels
 
 // Coulomb constant (N*m^2/C^2)
 const float k = 8.99f * std::pow(10.0f, 9);
 
 // Timestep (seconds)
-float dt = 0.001f;
+float dt = 0.01f;
 
 // Initial speeds are given in m/s and scaled to pixels/second
 float speed1 = 0.01f * SCALE; // pixels/second

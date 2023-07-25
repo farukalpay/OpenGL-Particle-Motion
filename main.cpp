@@ -61,7 +61,7 @@ void updateForces() {
 }
 
 
-GLuint texture[2];  
+GLuint texture[2];
 
 //Function to load an image using the STB library
 GLuint LoadTexture(const char* filename, int wrap)
@@ -195,9 +195,21 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     QueryPerformanceCounter(&startCounter);
 
     //Declare textures
-    texture[0] = LoadTexture("C:\\Users\\faruk\\Desktop\\positive.png", 1);
-    texture[1] = LoadTexture("C:\\Users\\faruk\\Desktop\\negative.png", 1);
-    GLuint background = LoadTexture("C:\\Users\\faruk\\Desktop\\space.png", 1);
+ 
+    if (q1 >= 0) {
+        texture[0] = LoadTexture("electron.png", 1);
+    }
+    else {
+        texture[0] = LoadTexture("proton.png", 1);
+    }
+
+    if (q2 >= 0) {
+        texture[1] = LoadTexture("electron.png", 1);
+    }
+    else {
+        texture[1] = LoadTexture("proton.png", 1);
+    }
+    GLuint background = LoadTexture("space.png", 1);
     while (running) {
         while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
             if (msg.message == WM_QUIT) {
@@ -229,23 +241,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             DrawImage(texture[0], pos1 + ((q1 > 0) ? halfWidth : -halfWidth), 0.0f, width, width);
             DrawImage(texture[1], pos2 + ((q2 > 0) ? halfWidth : -halfWidth), 0.0f, width, width);
 
-    //Draw the text
-    char text[1024];
-    const char* formats[] = {
-        "Charge Q1: %.4f nC",
-        "Charge Q2: %.4f nC",
-        "Speed Q1: %.4f m/s",
-        "Speed Q2: %.4f m/s",
-        "Position Q1: %.4f m",
-        "Position Q2: %.4f m",
-        "Distance between Q1 and Q2: %.4f m",
-        "Force Applied to Q1: %.4f N",
-        "Force Applied to Q2: %.4f N"
-    };
+            //Draw the text
+            char text[1024];
+            const char* formats[] = {
+                "Charge Q1: %.4f nC",
+                "Charge Q2: %.4f nC",
+                "Speed Q1: %.4f m/s",
+                "Speed Q2: %.4f m/s",
+                "Position Q1: %.4f m",
+                "Position Q2: %.4f m",
+                "Distance between Q1 and Q2: %.4f m",
+                "Force Applied to Q1: %.4f N",
+                "Force Applied to Q2: %.4f N"
+            };
 
-    float values[] = {
-        q1, q2,  std::abs(speed1/SCALE),  std::abs(speed2/SCALE), pos1/SCALE, pos2/SCALE, abs(pos1 - pos2)/SCALE, force1, force2
-    };
+            float values[] = {
+                q1, q2,  std::abs(speed1 / SCALE),  std::abs(speed2 / SCALE), pos1 / SCALE, pos2 / SCALE, abs(pos1 - pos2) / SCALE, force1, force2
+            };
 
             // Draw each line of text
             for (int lineNumber = 0; lineNumber < 9; lineNumber++) {

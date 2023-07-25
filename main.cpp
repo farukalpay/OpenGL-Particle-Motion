@@ -16,23 +16,23 @@
 const float width = 10.0f;  // The width of the image. Adjust as necessary
 const float halfWidth = width / 2.0f;  // Half the width, which we'll use often
 
-// Scale factor for positions (1 meter = 1.0 * 10^-12 pixels)
+// Scale factor for positions (1 piksel = 1 pikometer)
 const float SCALE = std::pow(10.0f, -12.0f);
 
 // Charges are given in nano-Coulombs
 float q1 = 1.0f;  // nano-Coulombs
-float q2 = 1.0f; // nano-Coulombs
+float q2 = -1.0f; // nano-Coulombs
 
 // Positions are given in meters and scaled to pixels
 // Initial positions are in the middle of the screen
-float pos1 = 5; // pixels
-float pos2 = -5; // pixels
+float pos1 = 5; // pixels = pikometer
+float pos2 = -5; // pixels = pikometer
 
 // Coulomb constant (N*m^2/C^2)
-const float k = 8.99f * std::pow(10.0f, 9);
+const float k = 8.9875517923f * std::pow(10.0f, 9);
 
 // Timestep (seconds)
-float dt = 0.01f;
+float dt = 0.001f;
 
 // Initial speeds are given in m/s and scaled to pixels/second
 float speed1 = 0.01f * SCALE; // pixels/second
@@ -43,21 +43,32 @@ float mass1 = 9.10938356f * std::pow(10.0f, -31); // kg
 float mass2 = 9.10938356f * std::pow(10.0f, -31); // kg
 
 // Friction coefficient
-float friction = 2.0f;
+float friction = 1.0f; // N * dt / m
 
 float force1;
 float force2;
+float force1exact;
+float force2exact;
 
 void updateForces() {
-    float r = std::abs(pos2 - pos1) / SCALE + 2 * halfWidth;
+    float r = std::abs(pos2 - pos1) / SCALE + 2 * halfWidth ;
     float forceMagnitude = k * std::abs(q1 * q2) / (r * r);
     float direction = (q1 * q2) < 0 ? -1.0f : 1.0f;
 
-    // Minimum distance in meters, converted to pixels
-    float minimumDistance = 2.0f * SCALE; // pixels
-    // Convert force to pixel units by multiplying by SCALE
-    force1 = direction * forceMagnitude * SCALE / mass1 - friction * speed1;
-    force2 = -direction * forceMagnitude * SCALE / mass2 - friction * speed2;
+    // Convert force to pikometer by multiplying by SCALE
+    force1 = direction * forceMagnitude * SCALE / mass1;
+    force2 = -direction * forceMagnitude * SCALE / mass2;
+}
+
+void updateVelocities() {
+    // Friction force is proportional to the velocity and in the opposite direction
+    float frictionForce1 = friction * std::abs(speed1) * -std::copysign(1.0f, speed1);
+    float frictionForce2 = friction * std::abs(speed2) * -std::copysign(1.0f, speed2);
+    speed1 += (force1 + frictionForce1) * dt;
+    speed2 += (force2 + frictionForce2) * dt;
+    pos1 += speed1 * dt;
+    pos2 += speed2 * dt;
+
 }
 
 
@@ -195,21 +206,21 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     QueryPerformanceCounter(&startCounter);
 
     //Declare textures
- 
+
     if (q1 >= 0) {
-        texture[0] = LoadTexture("electron.png", 1);
+        texture[0] = LoadTexture("images\\electron.png", 1);
     }
     else {
-        texture[0] = LoadTexture("proton.png", 1);
+        texture[0] = LoadTexture("images\\proton.png", 1);
     }
 
     if (q2 >= 0) {
-        texture[1] = LoadTexture("electron.png", 1);
+        texture[1] = LoadTexture("images\\electron.png", 1);
     }
     else {
-        texture[1] = LoadTexture("proton.png", 1);
+        texture[1] = LoadTexture("images\\proton.png", 1);
     }
-    GLuint background = LoadTexture("space.png", 1);
+    GLuint background = LoadTexture("images\\space.png", 1);
     while (running) {
         while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
             if (msg.message == WM_QUIT) {
@@ -225,12 +236,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         if (frameTime > 1.0 / 120.0) { // limit to 60 FPS
             // Update forces
             updateForces();
-
-            // Update velocities and positions
-            speed1 += force1 * dt;
-            speed2 += force2 * dt;
-            pos1 += speed1 * dt;
-            pos2 += speed2 * dt;
+            updateVelocities();
 
             // Clear the window
             glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -244,19 +250,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             //Draw the text
             char text[1024];
             const char* formats[] = {
-                "Charge Q1: %.4f nC",
-                "Charge Q2: %.4f nC",
-                "Speed Q1: %.4f m/s",
-                "Speed Q2: %.4f m/s",
-                "Position Q1: %.4f m",
-                "Position Q2: %.4f m",
-                "Distance between Q1 and Q2: %.4f m",
-                "Force Applied to Q1: %.4f N",
-                "Force Applied to Q2: %.4f N"
+                "Charge Q1: %.2f nC",
+                "Charge Q2: %.2f nC",
+                "Speed Q1: %.2e pm/s",
+                "Speed Q2: %.2e pm/s",
+                "Position Q1: %.2e pm",
+                "Position Q2: %.2e pm",
+                "Friction: %.2f N * dt / m",
+                "Distance between Q1 and Q2: %.4e pm",
+                "Force Applied to Q1: %.2e N/m",
+                "Force Applied to Q2: %.2e N/m"
             };
 
             float values[] = {
-                q1, q2,  std::abs(speed1 / SCALE),  std::abs(speed2 / SCALE), pos1 / SCALE, pos2 / SCALE, abs(pos1 - pos2) / SCALE, force1, force2
+                q1, q2,  std::abs(speed1 / SCALE * dt),  std::abs(speed2 / SCALE * dt), pos1 / SCALE, pos2 / SCALE, friction, abs(pos1 - pos2) / SCALE, force1 * SCALE, force1 * SCALE, force2 * SCALE
             };
 
             // Draw each line of text

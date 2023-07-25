@@ -4,6 +4,7 @@
 This project simulates the motion of electrons and protons using Coulomb's Law. The simulation is visually represented on-screen using OpenGL.
 
 ![](https://github.com/farukalpay/OpenGL-Particle-Motion/blob/gh-pages/images/simulation.gif)
+![](https://github.com/farukalpay/OpenGL-Particle-Motion/blob/gh-pages/images/simulation2.gif)
 
 # Requirements
 This project requires OpenGL, [freeglut](https://www.transmissionzero.co.uk/software/freeglut-devel/) and [stb_image.h](https://github.com/nothings/stb/blob/master/stb_image.h) After installing all of these onto your system, the code will run without any issues.

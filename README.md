@@ -1,3 +1,4 @@
+[![Hits](https://hits.sh/github.com/farukalpay/OpenGL-Particle-Motion.svg)](https://hits.sh/github.com/farukalpay/OpenGL-Particle-Motion/)
 # OpenGL Particle Motion
 This project simulates the motion of electrons and protons using Coulomb's Law. The simulation is visually represented on-screen using OpenGL.
 

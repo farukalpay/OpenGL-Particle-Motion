@@ -267,7 +267,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             };
 
             // Draw each line of text
-            for (int lineNumber = 0; lineNumber < 9; lineNumber++) {
+            for (int lineNumber = 0; lineNumber < 10; lineNumber++) {
                 char text[1024];
                 sprintf_s(text, sizeof(text), formats[lineNumber], values[lineNumber]);
 

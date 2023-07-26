@@ -13,8 +13,8 @@
 #pragma comment(lib, "glu32.lib")
 #pragma comment(lib, "freeglut.lib")
 
-const float width = 10.0f;  // The width of the image. Adjust as necessary
-const float halfWidth = width / 2.0f;  // Half the width, which we'll use often
+const float width = 10.0f;  // The width of the image.
+const float halfWidth = width / 2.0f;  // Half the width
 
 // Scale factor for positions (1 piksel = 1 pikometer)
 const float SCALE = std::pow(10.0f, -12.0f);

@@ -524,3 +524,20 @@ while (running) {
 ```
 
 `while (running) {` loop is the main loop of the application. `PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)` This function is part of the Windows API and is used to handle window messages. These messages could be user input or system commands. `&msg` This is a pointer to a MSG structure msg where PeekMessage will store the details of the next message in the queue. `NULL` This parameter is used to filter the messages for a specific window. Any window that is a part of the current thread will have its messages retrieved by the function if it returns `NULL`. `(0, 0)` Messages are filtered using these parameters based on their message-value. When they are set to 0, no message-value-based filtering is carried out. `PM_REMOVE` This flag means that `PeekMessage` should remove the message from the queue after it has been retrieved. `while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))` This loop continues as long as there are messages in the queue. `if (msg.message == WM_QUIT)` If the message is `WM_QUIT`, an application termination request has been made. In this case, it changes running to false, causing the main loop to end. `TranslateMessage(&msg)` This function is used to generate additional messages, like `WM_CHAR` messages that are produced when a key is pressed. `DispatchMessage(&msg)` This function sends the message to the window's associated Window Procedure (WndProc) function. After all available messages have been processed, the application proceeds with the rest of the code in the main loop.
+
+```
+QueryPerformanceCounter(&endCounter);
+double frameTime = (endCounter.QuadPart - startCounter.QuadPart) / freq;
+```
+
+`QueryPerformanceCounter(&endCounter)` The function retrieves the current value of the high-resolution performance counter. The value is stored in `endCounter`. `double frameTime = (endCounter.QuadPart - startCounter.QuadPart) / freq` This line calculates the time taken for the current frame in seconds. `endCounter.QuadPart - startCounter.QuadPart` gives the number of ticks between the start of the frame and the end. Dividing by `freq` gives the frame time in seconds. `if (frameTime > 1.0 / 120.0) {` This code is limiting the frame rate to 120 frames per second. 
+
+```
+glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+and glClear(GL_COLOR_BUFFER_BIT);
+```
+
+These two lines clear the screen before the new frame is drawn. 
+`glClearColor(0.0f, 0.0f, 0.0f, 1.0f);` This line is setting the color that OpenGL uses when it clears the color buffer. The four values represent the red, green, blue, and alpha components of the color, respectively. `glClear(GL_COLOR_BUFFER_BIT);` This line tells OpenGL to clear the color buffer, which is essentially the same as erasing the screen before drawing the new frame. `DrawImage(background, 0.0f, 0.0f, 800, 600);` This line draws an image on the screen. The background parameter is the image that will be drawn. The next two parameters (0.0f, 0.0f) are the coordinates where the image will be drawn. The last two parameters (800, 600) specify the width and height of the image in pixels. `DrawImage(texture[0], pos1 + ((q1 > 0) ? halfWidth : -halfWidth), 0.0f, width, width);` This line is similar to the previous DrawImage call but it draws the first particle's image. `texture[0]` is the image to be drawn. The next value `pos1 + ((q1 > 0) ? halfWidth : -halfWidth)` is the x-coordinate where the image will be drawn. The y-coordinate is 0.0f. The width and height of the image are both set to width.
+
+

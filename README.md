@@ -532,12 +532,58 @@ double frameTime = (endCounter.QuadPart - startCounter.QuadPart) / freq;
 
 `QueryPerformanceCounter(&endCounter)` The function retrieves the current value of the high-resolution performance counter. The value is stored in `endCounter`. `double frameTime = (endCounter.QuadPart - startCounter.QuadPart) / freq` This line calculates the time taken for the current frame in seconds. `endCounter.QuadPart - startCounter.QuadPart` gives the number of ticks between the start of the frame and the end. Dividing by `freq` gives the frame time in seconds. `if (frameTime > 1.0 / 120.0) {` This code is limiting the frame rate to 120 frames per second. 
 
+From the beginning of the code
+
+```
+const float width = 10.0f;  // The width of the image
+const float halfWidth = width / 2.0f;  // Half the width
+```
+
 ```
 glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 and glClear(GL_COLOR_BUFFER_BIT);
 ```
 
 These two lines clear the screen before the new frame is drawn. 
-`glClearColor(0.0f, 0.0f, 0.0f, 1.0f);` This line is setting the color that OpenGL uses when it clears the color buffer. The four values represent the red, green, blue, and alpha components of the color, respectively. `glClear(GL_COLOR_BUFFER_BIT);` This line tells OpenGL to clear the color buffer, which is essentially the same as erasing the screen before drawing the new frame. `DrawImage(background, 0.0f, 0.0f, 800, 600);` This line draws an image on the screen. The background parameter is the image that will be drawn. The next two parameters (0.0f, 0.0f) are the coordinates where the image will be drawn. The last two parameters (800, 600) specify the width and height of the image in pixels. `DrawImage(texture[0], pos1 + ((q1 > 0) ? halfWidth : -halfWidth), 0.0f, width, width);` This line is similar to the previous DrawImage call but it draws the first particle's image. `texture[0]` is the image to be drawn. The next value `pos1 + ((q1 > 0) ? halfWidth : -halfWidth)` is the x-coordinate where the image will be drawn. The y-coordinate is 0.0f. The width and height of the image are both set to width.
+`glClearColor(0.0f, 0.0f, 0.0f, 1.0f);` This line is setting the color that OpenGL uses when it clears the color buffer. The four values represent the red, green, blue, and alpha components of the color, respectively. `glClear(GL_COLOR_BUFFER_BIT);` This line tells OpenGL to clear the color buffer, which is essentially the same as erasing the screen before drawing the new frame. `DrawImage(background, 0.0f, 0.0f, 800, 600);` This line draws an image on the screen. The background parameter is the image that will be drawn. The next two parameters (0.0f, 0.0f) are the coordinates where the image will be drawn. The last two parameters (800, 600) specify the width and height of the image in pixels. `DrawImage(texture[0], pos1 + ((q1 > 0) ? halfWidth : -halfWidth), 0.0f, width, width);` This line is similar to the previous DrawImage call but it draws the first particle's image. `texture[0]` is the image to be drawn. The next value `pos1 + ((q1 > 0) ? halfWidth : -halfWidth)` is the x-coordinate where the image will be drawn. The y-coordinate is 0.0f. The width and height of the image are both set to width variable. 
 
+```
+char text[1024];
+const char* formats[] = {
+	"Charge Q1: %.2f nC",
+	"Charge Q2: %.2f nC",
+	"Speed Q1: %.2e pm/s",
+	"Speed Q2: %.2e pm/s",
+	"Position Q1: %.2e pm",
+	"Position Q2: %.2e pm",
+	"Friction: %.2f N * dt / m",
+	"Distance between Q1 and Q2: %.4e pm",
+	"Force Applied to Q1: %.2e N/m",
+	"Force Applied to Q2: %.2e N/m"
+            };
 
+float values[] = {
+	q1,
+ 	q2,
+	std::abs(speed1 / SCALE * dt),
+	std::abs(speed2 / SCALE * dt),
+	pos1 / SCALE,
+	pos2 / SCALE,
+	friction,
+	abs(pos1 - pos2) / SCALE,
+	force1 * SCALE,
+	force1 * SCALE,
+	force2 * SCALE
+            };
+
+for (int lineNumber = 0; lineNumber < 10; lineNumber++) {
+	char text[1024];
+	sprintf_s(text, sizeof(text), formats[lineNumber], values[lineNumber]);
+	drawText(text, -100.0f, 95.0f - 8.0f * lineNumber);
+            }
+```
+
+`char text[1024];` This array is used to store formatted strings hat will be displayed in the simulation.
+`const char* formats[]` is an array of constant character pointers, where each pointer is pointing to a string.
+`float values[]` is an array of floating-point numbers. `std::abs()` function takes absolute value of variables. In the code, operations such as dividing by SCALE, multiplying by dt, multiplying by SCALE are used only for unit conversation. Therefore, it is possible to draw the coordinates on our computer screen. 
+Here, the values are getting converted into reasonable structures before drawing to the screen.

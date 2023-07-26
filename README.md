@@ -12,8 +12,8 @@ This project requires OpenGL, [freeglut](https://www.transmissionzero.co.uk/soft
 # Code Explanation
 
 ```
-const float width = 10.0f;  // The width of the image. Adjust as necessary
-const float halfWidth = width / 2.0f;  // Half the width, which we'll use often
+const float width = 10.0f; 
+const float halfWidth = width / 2.0f;
 
 // Scale factor for positions (1 piksel = 1 pikometer)
 const float SCALE = std::pow(10.0f, -12.0f);
@@ -357,14 +357,55 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 This is a Windows Application that utilizes the Win32 API and OpenGL for rendering. And `WinMain()` is the entry point for a Windows application.
 
+`const wchar_t CLASS_NAME[] = L"Sample Window Class";`
+This line of code defines a constant string that contains the name of a window class. 
+The value "Sample Window Class" is assigned to the `CLASS_NAME` constant, which is defined as an array of wide characters `wchar_t`. This indicates that the window class name is a string made up of 15 characters: "S," "a," "m," "p," "l," "e," "", "," "W," "i," "n," "d," "o," "w," "C," "l," "a," "s," "s."
+
 ```
 WNDCLASS wc = { };
 wc.lpfnWndProc = WindowProcedure;
 wc.hInstance = hInstance;
 wc.lpszClassName = CLASS_NAME;
 ```
+
 The window class attributes are contained in a structure called `WNDCLASS` in the Windows API.
 Here, a `WNDCLASS` structure is being set up. `hInstance` is a handle to an instance, `lpfnWndProc` is a pointer to the window procedure, and `lpszClassName` is the name of the class.
 
+```
+if (!RegisterClass(&wc)) {
+	MessageBox(NULL, L"Window Registration Failed!", L"Error!", MB_ICONEXCLAMATION | MB_OK);
+        return 0;
+    }
+
+HWND hwnd = CreateWindow(CLASS_NAME, L"Sample Window", WS_MINIMIZEBOX | WS_SYSMENU, CW_USEDEFAULT, CW_USEDEFAULT, 800, 600, NULL, NULL, hInstance, NULL);
+
+if (hwnd == NULL) {
+        MessageBox(NULL, L"Window Creation Failed!", L"Error!", MB_ICONEXCLAMATION | MB_OK);
+        return 0;
+    }
+```
+
+`if (!RegisterClass(&wc)) {` This line checks if the RegisterClass function call was successful. If the `RegisterClass` function call fails, the code displays an error message using MessageBox and returns 0, indicating failure.
+
+`HWND hwnd = CreateWindow(CLASS_NAME, L"Sample Window", WS_MINIMIZEBOX | WS_SYSMENU, CW_USEDEFAULT, CW_USEDEFAULT, 800, 600, NULL, NULL, hInstance, NULL);` This line creates a new window using the CreateWindow function.
+`CLASS_NAME` is the name of the window class that was registered earlier.
+L"Sample Window" is the title of the window.
+`WS_MINIMIZEBOX | WS_SYSMENU` are window styles that specify the appearance and behavior of the window. 
+`WS_MINIMIZEBOX` adds a minimize button to the window, and `WS_SYSMENU` adds a system menu (minimize, maximize, and close).
+`CW_USEDEFAULT` and `CW_USEDEFAULT` are used to specify the default settings for the window's width and height.
+800 and 600 are the width and height of the window, respectively.
+NULL and NULL indicate that the window does not have a parent window or a menu.
+`hInstance` is a handle to the instance of the application.
+NULL indicates that the window does not have a creation data (i.e., user data that is passed to the window's creation function).
+The `CreateWindow` function returns a handle to the newly created window (HWND) if successful, or NULL if it fails.
+
+```
+if (hwnd == NULL) {
+        MessageBox(NULL, L"Window Creation Failed!", L"Error!", MB_ICONEXCLAMATION | MB_OK);
+        return 0;
+    }
+```
+
+This if statement checks if the `CreateWindow` function call was successful by checking if the hwnd variable is non-NULL. If hwnd is NULL, it means that the CreateWindow function failed, and the code displays an error message using MessageBox and returns 0.
 
 

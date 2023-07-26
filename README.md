@@ -450,3 +450,45 @@ wglMakeCurrent(hdc, hglrc);
 These lines establish a new OpenGL rendering context, a state machine that holds all of the information necessary for rendering graphics. The OpenGL rendering context `hglrc` is made the calling thread's current rendering context by `wglMakeCurrent`.
 
 `HGLRC` is for encapsulate and store variables, buffers, shaders, and so on. `HDC` is bridge between the low-level drawing capabilities of the operating system and the high-level, abstracted drawing capabilities of OpenGL. `HGLRC hglrc = wglCreateContext(hdc);` in this code, `wglCreateContext` is a function that creates a new OpenGL rendering context for drawing on a device in the Windows operating system. `wglMakeCurrent(hdc, hglrc);` The OpenGL context must be made the current context once it has been created. The `wglMakeCurrent` function changes the calling thread's current rendering context to the specified OpenGL context.
+
+```
+glEnable(GL_BLEND);
+glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+```
+
+These lines enable blending (the process of combining color data) and specify pixel arithmetic, respectively. ALPHA in an RGBA color model stands for transparency. `GL_SRC_ALPHA` refers to the alpha value of the source blending factor, and `GL_ONE_MINUS_SRC_ALPHA` refers to 1 minus the alpha value of the source blending factor.
+
+```
+int argc = 0; char* argv[] = { NULL };
+glutInit(&argc, argv);
+```
+
+These lines initialize the GLUT library.
+
+```
+glMatrixMode(GL_PROJECTION);
+glLoadIdentity();
+glOrtho(-100.0f, 100.0f, -100.0f, 100.0f, -1.0f, 1.0f);
+glMatrixMode(GL_MODELVIEW);
+```
+
+These lines is to set up how 2D scene is projected onto the 2D surface of the screen. This involves the use of transformation matrices.
+
+`glMatrixMode(GL_PROJECTION);` This function establishes the current matrix mode, meaning that the matrix specified will be used for all ensuing matrix operations (such as glLoadIdentity, glOrtho, etc.) `GL_PROJECTION` sets the current matrix to the projection matrix in this situation. `glLoadIdentity();` This function replaces the current matrix with the identity matrix. In other words, it clears out any previous projection matrix. `glOrtho(-100.0f, 100.0f, -100.0f, 100.0f, -1.0f, 1.0f);` This function multiplies the current matrix by an orthographic matrix, defined by the parameters. The box's left and right edges are at x=-100 and x=100, the bottom and top edges are at y=-100 and y=100, and the near and far clipping planes are at z=-1 and z=1. `glMatrixMode(GL_MODELVIEW);` This line switches the current matrix mode back to the ModelView matrix. This means subsequent transformations will apply to the ModelView matrix, not the Projection matrix.
+
+```
+MSG msg = { 0 };
+bool running = true;
+```
+
+This creates a MSG structure that will receive information about a message from the Windows procedure function, and a boolean variable to control the main program loop.
+
+```
+LARGE_INTEGER frequency;
+QueryPerformanceFrequency(&frequency);
+double freq = static_cast<double>(frequency.QuadPart);
+LARGE_INTEGER startCounter, endCounter;
+QueryPerformanceCounter(&startCounter);
+```
+
+This code is using the high-resolution Windows Performance Counter to measure time. `LARGE_INTEGER frequency;` This line declares a variable frequency of type `LARGE_INTEGER`. `LARGE_INTEGER` is a union that represents a 64-bit signed integer. `QueryPerformanceFrequency(&frequency);` This line is a way of asking the computer "how fast does the computer's high-resolution performance counter tick?" and stores the returning value as frequency. `double freq = static_cast<double>(frequency.QuadPart);`

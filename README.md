@@ -79,7 +79,7 @@ pos1 += speed1 * dt;
 pos2 += speed2 * dt;
 ```
 
-These lines update the two particles' velocities (speed1 and speed2). The updated velocity is the current velocity multiplied by the time step plus the total force (the sum of the electrostatic and friction forces). This is an application of Newton's second law of motion (F=ma), which takes the form a = F/m, with the velocity change (delta v) equal to a*dt.
+These lines update the two particles' velocities (speed1 and speed2). The updated velocity is the current velocity multiplied by the time step plus the total force (the sum of the electrostatic and friction forces). We can think of Time Step as slow motion. In other words, our code actually works at 1/1000 of a second. We do this because electrons and protons move very fast. This is an application of Newton's second law of motion (F=ma), which takes the form a = F/m, with the velocity change (delta v) equal to a*dt.
 
 
 `GLuint texture[2];` This line creates an array of two GLuints. This array will hold the references for two textures that will be loaded later.
@@ -355,7 +355,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 }
 ```
 
-This is a Windows Application that utilizes the Win32 API and OpenGL for rendering. And `WinMain()` is the entry point for a Windows application.
+This is a Windows Application that utilizes the Win32 API and OpenGL for rendering.
+
+`int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {` is the entry point for a Windows application. 
+`HINSTANCE hInstance` This is a handle to the application instance.
+`HINSTANCE hPrevInstance` This is a handle to the previous instance of the application, if there is one. If this is the first instance of the application, then hPrevInstance is NULL.
+`LPSTR lpCmdLine` This is a pointer to a string that contains the command line arguments passed to the application. If there are no command line arguments, then lpCmdLine is NULL.
+`int nShowCmd` This is an integer value that specifies how the application should be shown. i.e. `SW_SHOW`, `SW_HIDE`, `SW_MINIMIZE`, or `SW_MAXIMIZE`.
 
 `const wchar_t CLASS_NAME[] = L"Sample Window Class";`
 This line of code defines a constant string that contains the name of a window class. 
@@ -408,4 +414,39 @@ if (hwnd == NULL) {
 
 This if statement checks if the `CreateWindow` function call was successful by checking if the hwnd variable is non-NULL. If hwnd is NULL, it means that the CreateWindow function failed, and the code displays an error message using MessageBox and returns 0.
 
+`ShowWindow(hwnd, nShowCmd);` This code shows the window using the ShowWindow function. The function takes two parameters. The first is the handle to the window (HWND), and the second is a value that specifies how the window should be shown (SW_SHOW, SW_HIDE, SW_MINIMIZE, and SW_MAXIMIZE)
 
+`HDC hdc = GetDC(hwnd);` This line retrieves a handle to a device context (DC) for the client area of a specified window (hwnd). A device context is a Windows data structure containing information about the drawing attributes of a device like a display or a printer.
+
+```
+PIXELFORMATDESCRIPTOR pfd; 
+ZeroMemory(&pfd, sizeof(pfd));
+```
+
+A `PIXELFORMATDESCRIPTOR` is a structure that describes the pixel format of a drawing surface. All of its members are initialized to zero using `ZeroMemory`.
+
+```
+pfd.nSize = sizeof(pfd);
+pfd.nVersion = 1;
+pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+pfd.iPixelType = PFD_TYPE_RGBA;
+pfd.cColorBits = 24;
+```
+
+These lines define the values for the `PIXELFORMATDESCRIPTOR` structure's members. They define details about the pixel format, including the number of color bits and the type of buffer to use.
+
+```
+int iFormat = ChoosePixelFormat(hdc, &pfd);
+SetPixelFormat(hdc, iFormat, &pfd);
+```
+
+These lines let Windows to select the most suitable pixel format for the HDC device context. Then, after calling `SetPixelFormat`, the device context's pixel format is changed to match the format specified by `iFormat`.
+
+```
+HGLRC hglrc = wglCreateContext(hdc); 
+wglMakeCurrent(hdc, hglrc);
+```
+
+These lines establish a new OpenGL rendering context, a state machine that holds all of the information necessary for rendering graphics. The OpenGL rendering context `hglrc` is made the calling thread's current rendering context by `wglMakeCurrent`.
+
+`HGLRC` is for encapsulate and store variables, buffers, shaders, and so on. `HDC` is bridge between the low-level drawing capabilities of the operating system and the high-level, abstracted drawing capabilities of OpenGL. `HGLRC hglrc = wglCreateContext(hdc);` in this code, `wglCreateContext` is a function that creates a new OpenGL rendering context for drawing on a device in the Windows operating system. `wglMakeCurrent(hdc, hglrc);` The OpenGL context must be made the current context once it has been created. The `wglMakeCurrent` function changes the calling thread's current rendering context to the specified OpenGL context.

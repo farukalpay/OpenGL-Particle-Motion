@@ -575,7 +575,14 @@ float values[] = {
 	force1 * SCALE,
 	force2 * SCALE
             };
+```
 
+`char text[1024];` This array is used to store formatted strings hat will be displayed in the simulation.
+`const char* formats[]` is an array of constant character pointers, where each pointer is pointing to a string.
+`float values[]` is an array of floating-point numbers. `std::abs()` function takes absolute value of variables. In the code, operations such as dividing by SCALE, multiplying by dt, multiplying by SCALE are used only for unit conversation. Therefore, it is possible to draw the coordinates on our computer screen. 
+Here, the values are getting converted into reasonable structures before drawing to the screen.
+
+```
 for (int lineNumber = 0; lineNumber < 10; lineNumber++) {
 	char text[1024];
 	sprintf_s(text, sizeof(text), formats[lineNumber], values[lineNumber]);
@@ -583,7 +590,10 @@ for (int lineNumber = 0; lineNumber < 10; lineNumber++) {
             }
 ```
 
-`char text[1024];` This array is used to store formatted strings hat will be displayed in the simulation.
-`const char* formats[]` is an array of constant character pointers, where each pointer is pointing to a string.
-`float values[]` is an array of floating-point numbers. `std::abs()` function takes absolute value of variables. In the code, operations such as dividing by SCALE, multiplying by dt, multiplying by SCALE are used only for unit conversation. Therefore, it is possible to draw the coordinates on our computer screen. 
-Here, the values are getting converted into reasonable structures before drawing to the screen.
+The loop `for (int lineNumber = 0; lineNumber < 10; lineNumber++)` runs ten times, which corresponds to the number of format strings in in the formats array. Array `char text[1024]` will be used to hold the resulting string after formatting. `sprintf_s(text, sizeof(text), formats[lineNumber], values[lineNumber]);` This function writes the formatted data from the values array into the text array. `drawText(text, -100.0f, 95.0f - 8.0f * lineNumber);`  function is called to render the resulting text string onto the screen. After the text is drawn, `SwapBuffers(hdc)` is called. This is a function that swaps the front and back buffers. The back buffer is where all the rendering commands have been executed, and by swapping it to the front, all the rendered content becomes visible on the screen. `startCounter = endCounter;` is used to reset the start time. The `wglMakeCurrent(NULL, NULL)` function call makes the current rendering context no longer current. The `wglDeleteContext(hglrc)` function call deletes the OpenGL rendering context that was created earlier in the program. `ReleaseDC(hwnd, hdc)` function call releases the device context (hdc) that was used for the window (hwnd). Finally, the program returns `msg.wParam`. When the WM_QUIT message is received, it sets running to false, which causes the program to exit the loop and start cleaning up.
+
+```
+case WM_CLOSE:
+	PostQuitMessage(0);
+	break;
+```

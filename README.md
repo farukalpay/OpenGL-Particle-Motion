@@ -491,4 +491,36 @@ LARGE_INTEGER startCounter, endCounter;
 QueryPerformanceCounter(&startCounter);
 ```
 
-This code is using the high-resolution Windows Performance Counter to measure time. `LARGE_INTEGER frequency;` This line declares a variable frequency of type `LARGE_INTEGER`. `LARGE_INTEGER` is a union that represents a 64-bit signed integer. `QueryPerformanceFrequency(&frequency);` This line is a way of asking the computer "how fast does the computer's high-resolution performance counter tick?" and stores the returning value as frequency. `double freq = static_cast<double>(frequency.QuadPart);`
+This code is using the high-resolution Windows Performance Counter to measure time. `LARGE_INTEGER frequency;` This line declares a variable frequency of type `LARGE_INTEGER`. `LARGE_INTEGER` is a union that represents a 64-bit signed integer. `QueryPerformanceFrequency(&frequency);` This line is a way of asking the computer "how fast does the computer's high-resolution performance counter tick?" and stores the returning value as frequency. `double freq = static_cast<double>(frequency.QuadPart);` This line is converting the frequency value to a double. LARGE_INTEGER is a union that can be accessed as an __int64 and QuadPart is the __int64 representation. This gives the number of counts per second as a double. `LARGE_INTEGER startCounter, endCounter;` These lines declare two more `LARGE_INTEGER` variables, `startCounter` and `endCounter`. `QueryPerformanceCounter(&startCounter);` This line is a way of asking the computer "What is the current tick (or count) of your precision clock right now?" and stores the returning value as startCounter. 
+
+```
+if (q1 >= 0) {
+	texture[0] = LoadTexture("images\\electron.png", 1);
+    }
+else {
+        texture[0] = LoadTexture("images\\proton.png", 1);
+    }
+
+if (q2 >= 0) {
+        texture[1] = LoadTexture("images\\electron.png", 1);
+    }
+else {
+        texture[1] = LoadTexture("images\\proton.png", 1);
+    }
+GLuint background = LoadTexture("images\\space.png", 1);
+```
+
+The `if` statements are checking the values of q1 and q2 to determine if the charge is proton or electron. The loaded textures are stored in the texture array at indices 0 and 1 respectively. `GLuint LoadTexture(const char* filename, int wrap)` If wrap is 1, then the texture repeats; if wrap is 0, the texture is clamped to its edge. `texture[..] = LoadTexture("images\\...png", 1);` if the texture is sampled outside of its usual range, it will repeat.
+
+```
+while (running) {
+	while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+            if (msg.message == WM_QUIT) {
+                running = false;
+            }
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+```
+
+`while (running) {` loop is the main loop of the application. `PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)` This function is part of the Windows API and is used to handle window messages. These messages could be user input or system commands. `&msg` This is a pointer to a MSG structure msg where PeekMessage will store the details of the next message in the queue. `NULL` This parameter is used to filter the messages for a specific window. Any window that is a part of the current thread will have its messages retrieved by the function if it returns `NULL`. `(0, 0)` Messages are filtered using these parameters based on their message-value. When they are set to 0, no message-value-based filtering is carried out. `PM_REMOVE` This flag means that `PeekMessage` should remove the message from the queue after it has been retrieved.
